@@ -1,10 +1,10 @@
-resource "vultr_dns_domain" "domain" {
+data "vultr_dns_domain" "domain" {
   domain = var.domain_name
 }
 
 resource "vultr_dns_record" "a_record" {
   count  = length(var.a_records)
-  domain = vultr_dns_domain.domain.id
+  domain = data.vultr_dns_domain.domain.id
   name   = var.a_records[count.index].name
   type   = "A"
   data   = var.a_records[count.index].ip
@@ -13,7 +13,7 @@ resource "vultr_dns_record" "a_record" {
 
 resource "vultr_dns_record" "cname_record" {
   count  = length(var.cname_records)
-  domain = vultr_dns_domain.domain.id
+  domain = data.vultr_dns_domain.domain.id
   name   = var.cname_records[count.index].name
   type   = "CNAME"
   data   = var.cname_records[count.index].value

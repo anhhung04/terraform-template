@@ -5,7 +5,6 @@ This repository contains Terraform configurations for managing infrastructure on
 ## Repository Structure
 
 ```
-.
 ├── environments
 │   ├── dev
 │   │   ├── main.tf
@@ -22,34 +21,53 @@ This repository contains Terraform configurations for managing infrastructure on
 │       ├── terraform.tfvars
 │       └── variables.tf
 └── modules
-    ├── instance
-    │   ├── main.tf
-    │   ├── outputs.tf
-    │   └── variables.tf
-    └── network
-        ├── main.tf
-        ├── outputs.tf
-        └── variables.tf
-    └── dns
-        ├── main.tf
-        ├── outputs.tf
-        └── variables.tf
+   ├── instance
+   │   ├── main.tf
+   │   ├── outputs.tf
+   │   ├── variables.tf
+   │   └── versions.tf
+   ├── network
+   │   ├── main.tf
+   │   ├── outputs.tf
+   │   ├── variables.tf
+   │   └── versions.tf
+   ├── dns
+   │   ├── main.tf
+   │   ├── outputs.tf
+   │   ├── variables.tf
+   │   └── versions.tf
+   └── firewall
+       ├── main.tf
+       ├── outputs.tf
+       ├── variables.tf
+       └── versions.tf
 ```
 
 ## Prerequisites
 
-1. [Terraform](https://www.terraform.io/downloads.html) (version 1.0.0 or later)
+1. [Terraform](https://www.terraform.io/downloads.html) (version 1.9.7 or later)
 2. A Vultr account and API key
 
 ## Configuration
 
 1. Navigate to the environment you want to deploy (dev or prod) in the `environments` directory.
-2. Edit the `terraform.tfvars` file to set your Vultr API key, desired region and domain name:
+2. Edit the `terraform.tfvars` file to set your Vultr API key and desired region:
 
 ```hcl
 region = "ewr"  # Change this to your preferred region
 vultr_api_key = "your-api-key-here"
+```
+
+3. In the same `terraform.tfvars` file, set your domain name:
+
+```hcl
 domain_name = "yourdomain.com"
+```
+
+4. In the same `terraform.tfvars` file, set your environment:
+
+```hcl
+environment = "dev"  # or "prod" for production
 ```
 
 **Note:** Keep your API key secret and never commit it to version control.
@@ -107,6 +125,10 @@ This module manages DNS records for a specified domain. It can create:
 - The domain itself in Vultr's DNS management
 - A records
 - CNAME records
+
+### Firewall Module
+
+This module creates a firewall group and associated rules to control inbound and outbound traffic for your Vultr instances.
 
 ## Environments
 

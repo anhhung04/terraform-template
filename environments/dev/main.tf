@@ -9,12 +9,17 @@ module "network" {
 module "instance" {
   source = "../../modules/instance"
 
-  region = var.region
-  instance_count = 2
-  instance_label = "dev-instance"
-  plan = "vc2-1c-1gb"
-  os_id = "387"  # Ubuntu 20.04 x64
-  vpc_id = module.network.vpc_id
+  region            = var.region
+  instance_count    = 1
+  instance_label    = "${var.environment}-instance"
+  plan              = "vc2-1c-1gb"
+  os_id             = "1743"  # Ubuntu 20.04 x64
+  vpc_id            = module.network.vpc_id
+  firewall_group_id = module.firewall.firewall_group_id
+  # ssh_key_ids = [
+  #   data.vultr_ssh_key.exist_key.id
+  # ]
+
 }
 
 module "dns" {
@@ -23,19 +28,59 @@ module "dns" {
   domain_name = var.domain_name
   a_records = [
     {
-      name = "www"
-      ip   = module.ec2.instance_ips[0]
+      name = "app"
+      ip   = module.instance.instance_ips[0]
+    },
+    # {
+    #   name = "api"
+    #   ip   = module.instance.instance_ips[1]
+    # }
+  ]
+}
+
+module "firewall" {
+  source = "../../modules/firewall"
+
+  firewall_group_description = "${var.environment} firewall group"
+  inbound_rules = [
+    {
+      protocol    = "tcp"
+      port_range  = "22"
+      subnet      = "0.0.0.0"
+      subnet_size = 0
+      notes       = "Allow SSH from anywhere"
     },
     {
-      name = "api"
-      ip   = module.ec2.instance_ips[1]
+      protocol    = "tcp"
+      port_range  = "80"
+      subnet      = "0.0.0.0"
+      subnet_size = 0
+      notes       = "Allow HTTP from anywhere"
+    },
+    {
+      protocol    = "tcp"
+      port_range  = "443"
+      subnet      = "0.0.0.0"
+      subnet_size = 0
+      notes       = "Allow HTTPS from anywhere"
     }
   ]
-  cname_records = [
+  outbound_rules = [
     {
-      name  = "app"
-      value = "www.${var.domain_name}."
+      protocol    = "tcp"
+      port_range  = "1-65535"
+      subnet      = "0.0.0.0"
+      subnet_size = 0
+      notes       = "Allow all outbound TCP traffic"
+    },
+    {
+      protocol    = "udp"
+      port_range  = "1-65535"
+      subnet      = "0.0.0.0"
+      subnet_size = 0
+      notes       = "Allow all outbound UDP traffic"
     }
   ]
 }
+
 

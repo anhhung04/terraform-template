@@ -28,3 +28,26 @@ variable "vpc_id" {
   description = "ID of the VPC to deploy the instances in"
   type        = string
 }
+
+variable "firewall_group_id" {
+  description = "The ID of the firewall group to associate with the instances"
+  type        = string
+}
+
+variable "backups" {
+  description = "Whether to enable backups for the instances"
+  type        = string
+  default     = "disabled"
+}
+
+variable "tags" {
+  description = "Tags to apply to the instances"
+  type        = list(string)
+  default     = []
+}
+
+variable "ssh_key_ids" {
+  description = "SSH key IDs to associate with the instances"
+  type        = list(string)
+  default     = []
+}
