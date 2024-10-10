@@ -18,6 +18,17 @@ module "instance" {
   firewall_group_id = module.firewall.firewall_group_id
 }
 
+resource "local_file" "inventory" {
+  content = <<-EOF
+[machine]
+%{ for instance_ip in module.instance.instance_ips ~}
+${instance_ip}
+%{ endfor ~}
+EOF
+
+  filename = "${path.module}/../../ansible/inventory.cfg"
+}
+
 module "dns" {
   source = "../../modules/dns"
 

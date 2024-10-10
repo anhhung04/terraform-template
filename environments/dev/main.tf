@@ -16,10 +16,20 @@ module "instance" {
   os_id             = "1743"  # Ubuntu 20.04 x64
   vpc_id            = module.network.vpc_id
   firewall_group_id = module.firewall.firewall_group_id
-  # ssh_key_ids = [
-  #   data.vultr_ssh_key.exist_key.id
-  # ]
+  ssh_key_ids = [
+    data.vultr_ssh_key.exist_key.id
+  ]
+}
 
+resource "local_file" "inventory" {
+  content = <<-EOF
+[machine]
+%{ for instance_ip in module.instance.instance_ips ~}
+${instance_ip}
+%{ endfor ~}
+EOF
+
+  filename = "${path.module}/../../ansible/inventory.cfg"
 }
 
 module "dns" {
