@@ -1,0 +1,15 @@
+#cloud-config
+hostname: ${hostname}
+users:
+  - name: root
+    lock_passwd: false
+    hashed_passwd: ${password}
+    ssh_authorized_keys: ${jsonencode(ssh_keys)}
+package_update: true
+package_upgrade: true
+packages:
+  - net-tools
+  - qemu-guest-agent
+runcmd:
+  - systemctl enable qemu-guest-agent
+  - reboot
