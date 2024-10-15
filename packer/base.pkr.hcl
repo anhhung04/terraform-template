@@ -4,17 +4,17 @@
 # Variable Definitions
 variable "proxmox_api_url" {
   type    = string
-  default = env("PROXMOX_API_URL")
+  default = env("PM_API_URL")
 }
 
-variable "proxmox_api_token_id" {
+variable "proxmox_user" {
   type    = string
-  default = env("PROXMOX_API_TOKEN_ID")
+  default = env("PM_USER")
 }
 
-variable "proxmox_api_token_secret" {
+variable "proxmox_password" {
   type      = string
-  default   = env("PROXMOX_API_TOKEN_SECRET")
+  default   = env("PM_PASS")
   sensitive = true
 }
 
@@ -27,8 +27,8 @@ source "proxmox-iso" "base" {
 
   # Proxmox Connection Settings
   proxmox_url = "${var.proxmox_api_url}"
-  username    = "${var.proxmox_api_token_id}"
-  token       = "${var.proxmox_api_token_secret}"
+  username    = "${var.proxmox_user}"
+  password   = "${var.proxmox_password}"
   # (Optional) Skip TLS Verification
   insecure_skip_tls_verify = true
 
